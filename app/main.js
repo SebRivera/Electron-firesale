@@ -26,11 +26,29 @@ exports.getFileFromUser = () =>{
 
     const file = files[0];
     openFile(file);
-}
+};
+
+exports.saveMarkdown = (file, content) =>{
+    if(!file){
+        file = dialog.showSaveDialog({
+            title: 'Save Markdown',
+            defaultPath: app.getPath('documents'),
+            filters: [
+                {name: 'Markdown Files', extensions: ['md', 'mdown','markdown']}
+            ]
+        });
+    }
+    if(!file) return;
+    fs.writeFileSync(file, content);
+    openFile(file);
+};
+
+
 
 const openFile = (file) =>{
     const content = fs.readFileSync(file).toString();
     //Sends to renderer
+    app.addRecentDocument(file);
     mainWindow.webContents.send('file-opened', file, content);
-}
+};
 
