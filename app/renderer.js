@@ -1,7 +1,7 @@
 const marked = require('marked');
 const path = require('path');
 
-const { remote, ipcRenderer } = require('electron');
+const { remote, ipcRenderer, shell } = require('electron');
 
 let filePath = null;
 let originalContent = '';
@@ -31,6 +31,13 @@ const updateUserInterface = isEdited => {
   if(isEdited){
     title = `${title} (Edited)`;
   }
+
+  if(filePath) currentWindow.setRepresentedFilename(filePath);
+  currentWindow.setDocumentEdited(isEdited);
+
+  showFileButton.disabled = !filePath;
+  openInDefaultButton.disabled = !filePath;
+
   saveMarkdownButton.disabled = !isEdited;
   revertButton.disabled = !isEdited;
 
@@ -48,12 +55,27 @@ openFileButton.addEventListener('click', () => {
   mainProcess.getFileFromUser();
 });
 
-saveMarkdownButton.addEventListener('click', () => {
-  mainProcess.saveMarkdown(filePath, markdownView.value);
-});
 
-saveHtmlButton.addEventListener('click', () => {
+const saveMarkdown = () => {
+  mainProcess.saveMarkdown(filePath, markdownView.value);
+};
+saveMarkdownButton.addEventListener('click', saveMarkdown);
+ipcRenderer.on('save-markdown', saveMarkdown);
+
+
+const saveHtml = () => {
   mainProcess.saveHtml(htmlView.innerHTML);
+}
+saveHtmlButton.addEventListener('click', saveHtml);
+ipcRenderer.on('save-html', saveHtml);
+
+showFileButton.addEventListener('click', () => {
+  if(!filePath) return alert('This file has not been saved to the file system.');
+  shell.showItemInFolder(filePath);
+});
+openInDefaultButton.addEventListener('click', () => {
+  if(!filePath) return alert('This file has not been saved to the file system.');
+  shell.openItem(filePath);
 });
 
 // "Listener" according to the channel set in main ('file-opened')
