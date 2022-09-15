@@ -1,7 +1,10 @@
 # Fire Sale
 
 First project from FrontEnd Masters Electron Course [Electron Fundamentals v2](https://frontendmasters.com/courses/electron-v2).
+
 Original Repository for the project: [firesale-fem-v2](https://github.com/electron-in-action/firesale-fem-v2).
+
+This application works as a Markdown text editor, which lets you preview live the changes you are making to the file. Provides options to open existting .md or .txt files, to save as .md or .html or to open your work on your default text editor.
 
 - Main Screen of the Desktop Application
 <img src="images-readme/MainScreen.PNG" width="600">
